@@ -5,7 +5,7 @@
     <div id="wrapper">
       <div class="leftPart">
         <router-link to="/SingleModel">Single Model</router-link>
-        <div id="leftGraph"></div>
+        <left-graph />
         <p>以单台光伏作为实验对象，利用机器学习进行功率预测</p>
       </div>
       <div class="rightPart">
@@ -18,8 +18,12 @@
 </template>
 
 <script>
+import LeftGraph from '../components/LeftGraph'
 export default {
-  name: 'Home'
+  name: 'Home',
+  components: {
+    LeftGraph
+  }
 }
 </script>
 
@@ -28,6 +32,8 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 h1, h2 {
@@ -36,7 +42,6 @@ h1, h2 {
 }
 
 #wrapper {
-  margin-top: 50px;
   display: flex;
 }
 
@@ -47,6 +52,7 @@ h1, h2 {
   align-items: center;
 }
 .leftPart a{
+  margin: 20px 0;
   font-size: 20px;
   width: 150px;
   height: 50px;
@@ -61,6 +67,7 @@ h1, h2 {
 }
 
 .rightPart a{
+  margin: 20px 0;
   font-size: 20px;
   width: 150px;
   height: 50px;
