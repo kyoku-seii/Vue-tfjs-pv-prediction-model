@@ -5,13 +5,19 @@
     <div id="wrapper">
       <div class="leftPart">
         <router-link to="/SingleModel">Single Model</router-link>
+        <div class="description">
+          <p>以单台光伏作为实验对象</p>
+          <p>利用机器学习进行功率预测</p>
+        </div>
         <left-graph />
-        <p>以单台光伏作为实验对象，利用机器学习进行功率预测</p>
       </div>
       <div class="rightPart">
         <router-link to="/AreaModel">Area Model</router-link>
+        <div class="description">
+          <p>以单台光伏作为实验对象</p>
+          <p>利用机器学习进行功率预测</p>
+        </div>
         <div id="rightGraph"></div>
-        <p>以单台光伏作为实验对象，利用机器学习进行功率预测</p>
       </div>
     </div>
   </div>
@@ -51,13 +57,19 @@ h1, h2 {
   flex-direction:column;
   align-items: center;
 }
+
+.description{
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+}
+
 .leftPart a{
-  margin: 20px 0;
+  margin-top: 20px;
   font-size: 20px;
   width: 150px;
   height: 50px;
-  color: red;
-  border: 1px solid red;
+  color: rgb(194,53,49);
+  border: 1px solid rgb(194,53,49);
   text-align: center;
   display: block;
   border-radius: 30px;
@@ -67,7 +79,7 @@ h1, h2 {
 }
 
 .rightPart a{
-  margin: 20px 0;
+  margin-top: 20px;
   font-size: 20px;
   width: 150px;
   height: 50px;
@@ -83,12 +95,24 @@ h1, h2 {
 
 .leftPart a:hover{
   color: white;
-  background-color: red;
+  background-color: rgb(194,53,49);
 }
 
 .rightPart a:hover{
   color: white;
   background-color: blue;
+}
+
+.description{
+  width: 200px;
+  margin: 20px 0 80px 0;
+}
+.description p{
+  text-align: center;
+  word-spacing: 0.05em;
+  white-space: normal;
+  margin: 0;
+  color: rgb(79,89,89);
 }
 
 </style>
