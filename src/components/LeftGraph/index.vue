@@ -1,5 +1,5 @@
 <template>
-  <vue-echarts :options="option"/>
+  <div id="chartDom"></div>
 </template>
 
 <script>
@@ -45,6 +45,9 @@ export default {
         title: {
           text: '单台光伏的预测数据'
         },
+        tooltip: {
+          trigger: 'axis'
+        },
         legend: {
           data: ['实际功率', '预测功率']
         },
@@ -71,7 +74,12 @@ export default {
     }
   },
   mounted () {
+    const chartDom = document.getElementById('chartDom')
+    const chart = this.$echarts.init(chartDom)
+    chart.showLoading()
     this.timer = setInterval(() => {
+      chart.hideLoading()
+      chart.setOption(this.option)
       this.n = (this.n + 1) % axisData.length
     }, 2000)
   },
@@ -82,7 +90,7 @@ export default {
 </script>
 
 <style scoped>
-.echarts {
+#chartDom {
   width: 600px;
   height: 500px;
 }

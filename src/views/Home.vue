@@ -9,15 +9,19 @@
           <p>以单台光伏作为实验对象</p>
           <p>利用机器学习进行功率预测</p>
         </div>
-        <left-graph/>
+        <el-card class="box-card" shadow="never">
+          <left-graph/>
+        </el-card>
       </div>
       <div class="rightPart">
         <router-link to="/AreaModel">Area Model</router-link>
         <div class="description">
-          <p>以单台光伏作为实验对象</p>
-          <p>利用机器学习进行功率预测</p>
+          <p>站在全局视角</p>
+          <p>以区域为单位进行功率预测</p>
         </div>
-        <right-graph/>
+        <el-card class="box-card" shadow="never">
+          <right-graph/>
+        </el-card>
       </div>
     </div>
   </div>
@@ -86,8 +90,8 @@ h1, h2 {
   font-size: 20px;
   width: 150px;
   height: 50px;
-  color: blue;
-  border: 1px solid blue;
+  color: #1E8449;
+  border: 1px solid #1E8449;
   text-align: center;
   display: block;
   border-radius: 30px;
@@ -103,7 +107,7 @@ h1, h2 {
 
 .rightPart a:hover {
   color: white;
-  background-color: blue;
+  background-color: #1E8449;
 }
 
 .description {
