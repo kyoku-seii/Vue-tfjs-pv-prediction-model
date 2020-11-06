@@ -9,7 +9,7 @@
           <p>以单台光伏作为实验对象</p>
           <p>利用机器学习进行功率预测</p>
         </div>
-        <left-graph />
+        <left-graph/>
       </div>
       <div class="rightPart">
         <router-link to="/AreaModel">Area Model</router-link>
@@ -17,7 +17,7 @@
           <p>以单台光伏作为实验对象</p>
           <p>利用机器学习进行功率预测</p>
         </div>
-        <div id="rightGraph"></div>
+        <right-graph/>
       </div>
     </div>
   </div>
@@ -25,10 +25,13 @@
 
 <script>
 import LeftGraph from '../components/LeftGraph'
+import RightGraph from '../components/RightGraph'
+
 export default {
   name: 'Home',
   components: {
-    LeftGraph
+    LeftGraph,
+    RightGraph
   }
 }
 </script>
@@ -51,25 +54,25 @@ h1, h2 {
   display: flex;
 }
 
-.leftPart, .rightPart{
+.leftPart, .rightPart {
   width: 50%;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   align-items: center;
 }
 
-.description{
+.description {
   font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
   font-size: 1rem;
 }
 
-.leftPart a{
+.leftPart a {
   margin-top: 20px;
   font-size: 20px;
   width: 150px;
   height: 50px;
-  color: rgb(194,53,49);
-  border: 1px solid rgb(194,53,49);
+  color: rgb(194, 53, 49);
+  border: 1px solid rgb(194, 53, 49);
   text-align: center;
   display: block;
   border-radius: 30px;
@@ -78,7 +81,7 @@ h1, h2 {
   line-height: 50px;
 }
 
-.rightPart a{
+.rightPart a {
   margin-top: 20px;
   font-size: 20px;
   width: 150px;
@@ -93,26 +96,27 @@ h1, h2 {
   line-height: 50px;
 }
 
-.leftPart a:hover{
+.leftPart a:hover {
   color: white;
-  background-color: rgb(194,53,49);
+  background-color: rgb(194, 53, 49);
 }
 
-.rightPart a:hover{
+.rightPart a:hover {
   color: white;
   background-color: blue;
 }
 
-.description{
+.description {
   width: 200px;
   margin: 20px 0 80px 0;
 }
-.description p{
+
+.description p {
   text-align: center;
   word-spacing: 0.05em;
   white-space: normal;
   margin: 0;
-  color: rgb(79,89,89);
+  color: rgb(79, 89, 89);
 }
 
 </style>
