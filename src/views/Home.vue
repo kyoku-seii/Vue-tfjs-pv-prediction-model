@@ -52,6 +52,8 @@ export default {
 h1, h2 {
   text-align: center;
   margin: 40px 0;
+  color: #273849;
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;;
 }
 
 #wrapper {

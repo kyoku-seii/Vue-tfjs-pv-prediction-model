@@ -57,7 +57,11 @@ export default {
         zoom: 6,
         roam: true
       },
-      tooltip: {},
+      tooltip: {
+        formatter: function (e) {
+          return e.name + ': ' + e.value[2] + '[kw]'
+        }
+      },
       series: [{
         name: 'PV output',
         type: 'scatter',
