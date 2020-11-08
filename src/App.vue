@@ -17,4 +17,9 @@ html, body, #app {
   padding: 0;
   margin: 0;
 }
+.article-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>

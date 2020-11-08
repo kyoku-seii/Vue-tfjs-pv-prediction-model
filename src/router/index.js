@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import AreaModel from '@/views/AreaModel'
 import SingleModel from '@/views/SingleModel'
+import Training from '@/views/Training'
+import A from '@/views/A'
+import B from '@/views/B'
 
 Vue.use(VueRouter)
 
@@ -18,7 +21,21 @@ const routes = [
   }, {
     path: '/SingleModel',
     name: 'SingleModel',
-    component: SingleModel
+    component: SingleModel,
+    children: [
+      {
+        path: 'A',
+        component: A
+      },
+      {
+        path: 'B',
+        component: B
+      },
+      {
+        path: 'training',
+        component: Training
+      }
+    ]
   }
 ]
 
