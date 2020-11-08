@@ -1,10 +1,16 @@
 <template>
-<div class="article-wrapper">this is training</div>
+  <div class="article-wrapper">this is training</div>
 </template>
 
 <script>
 export default {
-  name: 'Training'
+  name: 'Training',
+  inject: ['getTrainingData'],
+  computed: {
+    TrainingData () {
+      return this.getTrainingData()
+    }
+  }
 }
 </script>
 
