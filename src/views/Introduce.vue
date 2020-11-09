@@ -53,7 +53,10 @@
 
 <script>
 export default {
-  name: 'A'
+  name: 'A',
+  mounted () {
+    console.log(2222)
+  }
 }
 </script>
 

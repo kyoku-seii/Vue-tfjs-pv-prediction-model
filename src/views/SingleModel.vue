@@ -4,7 +4,7 @@
       <bar-menu></bar-menu>
     </div>
     <div class="context">
-        <router-view></router-view>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
   },
   data () {
     return {
-      normalData: null,
+      PVData: null,
       X_train: null,
       Y_train: null,
       X_valid: null,
@@ -31,11 +31,15 @@ export default {
   },
   provide () {
     return {
-      getData: this.getData
+      getXtrainData: this.getXtrainData,
+      getYtrainData: this.getYtrainData,
+      getXvalidData: this.getXvalidData,
+      getYvalidData: this.getYvalidData,
+      getXtestData: this.getXtestData,
+      getYtestData: this.getYtestData
     }
   },
   mounted () {
-    this.downLoadData('/data/X_train.json')
     this.downLoadAllData()
   },
   methods: {
@@ -45,25 +49,36 @@ export default {
         axios.get('/data/Y_train.json'),
         axios.get('/data/X_valid.json'),
         axios.get('/data/Y_valid.json'),
-        axios.get('/data/X_test.json')
-      ]).then(axios.spread((s1, s2, s3) => {
-        // console.log(s2.data)
+        axios.get('/data/X_test.json'),
+        axios.get('/data/Y_test.json')
+      ]).then(axios.spread((Xtrain, Ytrain, Xvalid, Yvalid, Xtest, Ytest) => {
+        this.X_train = Xtrain.data
+        this.Y_train = Ytrain.data
+        this.X_valid = Xvalid.data
+        this.Y_valid = Yvalid.data
+        this.X_test = Xtest.data
+        this.Y_test = Ytest.data
       }, error => {
         console.log(error)
       }))
     },
-    downLoadData (path, para) {
-      axios.get(path).then(response => {
-        this.X_train = response.data
-      }, error => {
-        console.log(error)
-      })
-    },
-    getData () {
+    getXtrainData () {
       return this.X_train
     },
-    show () {
-      console.log(this.X_train)
+    getYtrainData () {
+      return this.Y_train
+    },
+    getXvalidData () {
+      return this.X_valid
+    },
+    getYvalidData () {
+      return this.Y_valid
+    },
+    getXtestData () {
+      return this.X_test
+    },
+    getYtestData () {
+      return this.Y_test
     }
   }
 }
@@ -75,7 +90,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: stretch;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
 
   .menu {
     flex-basis: 260px;

@@ -75,7 +75,6 @@ export default {
           this.currentEpoch.push(epoch)
           this.currentLoss.push(logs.loss)
           this.processPercent = ((epoch + 1) / this.epoch) * 100
-          console.log(epoch)
         },
         onTrainBegin: logs => {
           this.isTraining = !this.isTraining
