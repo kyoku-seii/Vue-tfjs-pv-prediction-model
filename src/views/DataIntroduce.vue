@@ -1,10 +1,11 @@
 <template>
-  <div>bbbb</div>
+<div>111
+</div>
 </template>
 
 <script>
 export default {
-  name: 'B'
+  name: 'DataIntroduce'
 }
 </script>
 

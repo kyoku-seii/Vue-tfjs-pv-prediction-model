@@ -4,7 +4,7 @@
     <h2>光伏发电功率预测系统</h2>
     <div id="wrapper">
       <div class="leftPart">
-        <router-link to="/SingleModel">Single Model</router-link>
+        <router-link to="/SingleModel/Introduce">Single Model</router-link>
         <div class="description">
           <p>以单台光伏作为实验对象</p>
           <p>利用机器学习进行功率预测</p>

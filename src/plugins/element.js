@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import { Button, Card, Col, Menu, MenuItem, Row, Submenu } from 'element-ui'
+import { Button, Card, Col, Menu, MenuItem, Progress, Row, Submenu } from 'element-ui'
 
+Vue.use(Progress)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(MenuItem)

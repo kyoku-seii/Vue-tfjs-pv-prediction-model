@@ -4,7 +4,7 @@
       <bar-menu></bar-menu>
     </div>
     <div class="context">
-      <router-view></router-view>
+        <router-view></router-view>
     </div>
   </div>
 </template>
@@ -20,28 +20,50 @@ export default {
   },
   data () {
     return {
-      normalData: null
+      normalData: null,
+      X_train: null,
+      Y_train: null,
+      X_valid: null,
+      Y_valid: null,
+      X_test: null,
+      Y_test: null
     }
   },
   provide () {
     return {
-      getTrainingData: this.getTrainingData
+      getData: this.getData
     }
   },
   mounted () {
-    this.getData()
+    this.downLoadData('/data/X_train.json')
+    this.downLoadAllData()
   },
   methods: {
-    getData () {
-      axios.get('/data/id1_data.json').then(response => {
-        this.normalData = response.data
-        console.log(this.normalData)
+    downLoadAllData () {
+      axios.all([
+        axios.get('/data/X_train.json'),
+        axios.get('/data/Y_train.json'),
+        axios.get('/data/X_valid.json'),
+        axios.get('/data/Y_valid.json'),
+        axios.get('/data/X_test.json')
+      ]).then(axios.spread((s1, s2, s3) => {
+        // console.log(s2.data)
+      }, error => {
+        console.log(error)
+      }))
+    },
+    downLoadData (path, para) {
+      axios.get(path).then(response => {
+        this.X_train = response.data
       }, error => {
         console.log(error)
       })
     },
-    getTrainingData () {
-      return this.normalData
+    getData () {
+      return this.X_train
+    },
+    show () {
+      console.log(this.X_train)
     }
   }
 }
@@ -52,17 +74,17 @@ export default {
   height: 100%;
   display: flex;
   justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap:wrap;
 
   .menu {
-    flex-basis: 250px;
-    height: 100%;
+    flex-basis: 260px;
     background-color: #545c64;
   }
 
   .context {
     flex: 1;
-    height: 100%;
-    overflow: auto;
+    padding: 30px 50px;
   }
 
 }

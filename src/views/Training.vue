@@ -1,14 +1,21 @@
 <template>
-  <div class="article-wrapper">this is training</div>
+  <div class="article-wrapper">this is training
+    <button @click="show">123</button>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'Training',
-  inject: ['getTrainingData'],
+  inject: ['getData'],
   computed: {
-    TrainingData () {
-      return this.getTrainingData()
+    aaa: function () {
+      return this.getData()
+    }
+  },
+  methods: {
+    show () {
+      console.log(this.aaa)
     }
   }
 }

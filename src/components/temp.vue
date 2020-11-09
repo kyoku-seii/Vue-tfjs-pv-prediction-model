@@ -54,7 +54,6 @@ export default {
     },
     async test () {
       this.reset()
-      console.log(this.currentEpoch)
       const model = tf.sequential()
       model.add(tf.layers.dense({
         units: 1,

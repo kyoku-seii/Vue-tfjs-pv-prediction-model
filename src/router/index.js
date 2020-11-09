@@ -4,8 +4,9 @@ import Home from '../views/Home.vue'
 import AreaModel from '@/views/AreaModel'
 import SingleModel from '@/views/SingleModel'
 import Training from '@/views/Training'
-import A from '@/views/A'
-import B from '@/views/B'
+import Introduce from '@/views/Introduce'
+import Demo from '@/views/Demo'
+import DataIntroduce from '@/views/DataIntroduce'
 
 Vue.use(VueRouter)
 
@@ -24,16 +25,20 @@ const routes = [
     component: SingleModel,
     children: [
       {
-        path: 'A',
-        component: A
+        path: 'Introduce',
+        component: Introduce
       },
       {
-        path: 'B',
-        component: B
+        path: 'Demo',
+        component: Demo
       },
       {
         path: 'training',
         component: Training
+      },
+      {
+        path: 'DataIntroduce',
+        component: DataIntroduce
       }
     ]
   }
