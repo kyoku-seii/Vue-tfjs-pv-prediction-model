@@ -4,7 +4,9 @@
       <canvas id="canvas"></canvas>
     </div>
     <div id="option">
+      <p>层数 : </p>
       <el-slider v-model="layers" :step="1" :min="3" :max="5" show-stops></el-slider>
+      <p>每层神经元个数 : </p>
       <el-slider v-model="neurons" :step="1" :min="1" :max="5" show-stops></el-slider>
     </div>
   </div>

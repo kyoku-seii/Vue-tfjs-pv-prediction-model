@@ -17,12 +17,14 @@
         <el-input-number v-model="hyperparameters.batchSize" :min="100" :step="50" :max="1000"></el-input-number>
       </el-form-item>
       <el-form-item label="Epochs">
-        <el-input-number v-model="hyperparameters.epochs" :min="10" :step="10" :max="200"></el-input-number>
+        <el-input-number v-model="hyperparameters.epochs" :min="10" :step="10" :max="50"></el-input-number>
       </el-form-item>
     </el-form>
     <h2>开始学习</h2>
     <p>定制完自己的神经网络之后,开始在真实的数据场景下进行机器学习。</p>
-    <deep-learning :Xtrain="this.Xtrain" :Ytrain="this.Ytrain" :Xtest="this.Xtest" :Ytest="this.Ytest"
+    <deep-learning :Xtrain="this.Xtrain" :Ytrain="this.Ytrain"
+                   :Xvalid="this.Xvalid" :Yvalid="this.Yvalid"
+                   :Xtest="this.Xtest" :Ytest="this.Ytest"
                    :layersNumber='layersNumber' :neuronsNumber='neuronsNumber'
                    :epochs="hyperparameters.epochs" :batchSize="hyperparameters.batchSize">
     </deep-learning>
