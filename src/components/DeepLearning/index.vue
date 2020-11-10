@@ -18,7 +18,13 @@
 </template>
 
 <script>
-
+const array = (function () {
+  const array = []
+  for (let i = 0; i < 200; i++) {
+    array.push(i)
+  }
+  return array
+})()
 export default {
   name: 'DeepLearning',
   props: ['Xtrain', 'Ytrain', 'Xtest', 'Ytest', 'Xvalid', 'Yvalid', 'layersNumber', 'neuronsNumber', 'epochs', 'batchSize'],
@@ -28,7 +34,8 @@ export default {
       currentEpoch: [],
       currentLoss: [],
       validLoss: [],
-      processPercent: 0
+      processPercent: 0,
+      result: []
     }
   },
   computed: {
@@ -40,6 +47,10 @@ export default {
     },
     validAmount: function () {
       return this.Xvalid ? this.Xvalid.data.length : 0
+    },
+    testData: function () {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.Ytest ? this.Ytest.data.slice(0, 200) : []
     },
     option: function () {
       return {
@@ -77,6 +88,30 @@ export default {
           color: '#42b983'
         }]
       }
+    },
+    outputOption: function () {
+      return {
+        xAxis: {
+          name: '时间',
+          boundaryGap: false,
+          data: array
+        },
+        yAxis: {
+          name: 'output',
+          type: 'value',
+          min: 0,
+          max: 4
+        },
+        series: [{
+          type: 'line',
+          showSymbol: false,
+          data: this.testData
+        }, {
+          type: 'line',
+          showSymbol: false,
+          data: this.result
+        }]
+      }
     }
   },
   watch: {
@@ -87,6 +122,10 @@ export default {
     validOption: function () {
       const validLoss = this.$echarts.init(document.getElementById('validLoss'))
       validLoss.setOption(this.validOption)
+    },
+    outputOption: function () {
+      const output = this.$echarts.init(document.getElementById('output'))
+      output.setOption(this.outputOption)
     }
   },
   methods: {
@@ -123,6 +162,7 @@ export default {
           this.currentLoss.push(logs.loss)
           this.validLoss.push(logs.val_loss)
           this.processPercent = ((epoch + 1) / this.epochs) * 100
+          this.result = Array.from(model.predict(this.$tf.tensor(this.Xtest.data.slice(0, 200))).dataSync())
         },
         onTrainBegin: logs => {
           this.isTraining = !this.isTraining
@@ -144,6 +184,8 @@ export default {
     lossGraph.setOption(this.option)
     const validGraph = this.$echarts.init(document.getElementById('validLoss'))
     validGraph.setOption(this.validOption)
+    const outputGraph = this.$echarts.init(document.getElementById('output'))
+    outputGraph.setOption(this.outputOption)
   }
 }
 </script>
@@ -166,6 +208,11 @@ export default {
 
 #validLoss {
   width: 500px;
+  height: 500px;
+}
+
+#output {
+  width: 1000px;
   height: 500px;
 }
 </style>
