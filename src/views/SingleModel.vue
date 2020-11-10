@@ -39,7 +39,7 @@ export default {
       getYtestData: this.getYtestData
     }
   },
-  created () {
+  mounted () {
     this.downLoadAllData()
   },
   methods: {

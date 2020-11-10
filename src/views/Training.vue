@@ -22,7 +22,7 @@
     </el-form>
     <h2>开始学习</h2>
     <p>定制完自己的神经网络之后,开始在真实的数据场景下进行机器学习。</p>
-    <deep-learning :Xtrain="this.Xtrain"></deep-learning>
+    <deep-learning :Xtrain="this.Xtrain" :Ytrain="this.Ytrain" :epochs="hyperparameters.epochs"></deep-learning>
   </div>
 </template>
 
