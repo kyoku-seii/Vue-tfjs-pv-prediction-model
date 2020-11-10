@@ -1,8 +1,14 @@
 <template>
   <div class="article-wrapper">
     <h1>前端机器学习实战应用</h1>
-    <draw-neural :layersNumber="layersNumber" :neuronsNumber="neuronsNumber" v-on:changeLayers="changeLayers"
-                 v-on:changeNeurons="changeNeurons"/>
+    <h2>模型结构选择</h2>
+    <p>首先通过拖拽下面的滑块，订制你自己的神经网络结构，默认为3层隐藏层，每个隐藏层具有2个神经元的，一个深度学习模型。</p>
+    <p>当然你可以让模型变得更简单，或者更加复杂</p>
+    <div class="neuralControl">
+      <draw-neural :layersNumber="layersNumber" :neuronsNumber="neuronsNumber" v-on:changeLayers="changeLayers"
+                   v-on:changeNeurons="changeNeurons"/>
+    </div>
+    <h2>超参量选择</h2>
   </div>
 </template>
 
@@ -53,5 +59,7 @@ export default {
 </script>
 
 <style scoped>
-
+.neuralControl {
+  margin-top: 30px;
+}
 </style>

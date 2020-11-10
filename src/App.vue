@@ -32,7 +32,7 @@ html, body, #app {
     height: 400px;
   }
 
-  h1 {
+  h1, h2, h3 {
     color: #273849;
     font-weight: bolder;
     font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;

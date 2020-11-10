@@ -1,6 +1,8 @@
 <template>
   <div>
-    <canvas id="canvas"></canvas>
+    <div class="neuralWrapper">
+      <canvas id="canvas"></canvas>
+    </div>
     <div id="option">
       <el-slider v-model="layers" :step="1" :min="3" :max="5" show-stops></el-slider>
       <el-slider v-model="neurons" :step="1" :min="1" :max="5" show-stops></el-slider>
@@ -19,8 +21,8 @@ export default {
     return {
       layers: this.layersNumber,
       neurons: this.neuronsNumber,
-      width: 800,
-      height: 600
+      width: 400,
+      height: 300
     }
   },
   watch: {
@@ -39,6 +41,8 @@ export default {
   },
   methods: {
     render (layers, neurons, ctx) {
+      ctx.fillStyle = '#69c'
+      ctx.lineWidth = 3
       const circlePosition = []
       const [xMash, yMash] = this.init(circlePosition, layers, neurons, ctx)
       const radius = Math.min(xMash, yMash) * 0.4 / 2
@@ -88,13 +92,18 @@ export default {
   mounted () {
     const canvas = document.getElementById('canvas')
     const ctx = canvas.getContext('2d')
-    canvas.width = 800
-    canvas.height = 600
+    canvas.width = this.width
+    canvas.height = this.height
     this.render(this.layers, this.neurons, ctx)
   }
 }
 </script>
 
 <style scoped>
-
+.neuralWrapper{
+  width:500px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-200px);
+}
 </style>
