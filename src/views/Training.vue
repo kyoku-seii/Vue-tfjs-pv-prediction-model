@@ -2,29 +2,49 @@
   <div class="article-wrapper">
     <h1>前端机器学习实战应用</h1>
     <h2>模型结构选择</h2>
-    <p>首先通过拖拽下面的滑块，订制你自己的神经网络结构，默认为3层隐藏层，每个隐藏层具有2个神经元的，一个深度学习模型。</p>
+    <p>首先通过拖拽下面的滑块，订制你自己的神经网络结构，默认为3层隐藏层，每个隐藏层具有2个神经元的一个深度学习模型。</p>
     <p>当然你可以让模型变得更简单，或者更加复杂</p>
     <div class="neuralControl">
       <draw-neural :layersNumber="layersNumber" :neuronsNumber="neuronsNumber" v-on:changeLayers="changeLayers"
                    v-on:changeNeurons="changeNeurons"/>
     </div>
     <h2>超参量选择</h2>
+    <p>接下来选择深度学习模型的超参量，batchSize表示模型一次看多少个数据。epoch表示模型总共的学习次数</p>
+    <p>计数器显示的为默认数字，你可以点击左右的控器按钮或者自己输入来改变预设值</p>
+    <p>更多的超参量选择功能将在后续开放</p>
+    <el-form :inline="true" :model="hyperparameters">
+      <el-form-item label="BatchSize">
+        <el-input-number v-model="hyperparameters.batchSize" :min="100" :step="50" :max="1000"></el-input-number>
+      </el-form-item>
+      <el-form-item label="Epochs">
+        <el-input-number v-model="hyperparameters.epochs" :min="10" :step="10" :max="200"></el-input-number>
+      </el-form-item>
+    </el-form>
+    <h2>开始学习</h2>
+    <p>定制完自己的神经网络之后,开始在真实的数据场景下进行机器学习。</p>
+    <deep-learning :Xtrain="this.Xtrain"></deep-learning>
   </div>
 </template>
 
 <script>
 import DrawNeural from '../components/DrawNeural'
+import DeepLearning from '../components/DeepLearning'
 
 export default {
   name: 'Training',
   components: {
-    DrawNeural
+    DrawNeural,
+    DeepLearning
   },
   inject: ['getXtrainData', 'getYtrainData', 'getXvalidData', 'getYvalidData', 'getXtestData', 'getYtestData'],
   data () {
     return {
       layersNumber: 3,
-      neuronsNumber: 2
+      neuronsNumber: 2,
+      hyperparameters: {
+        batchSize: 300,
+        epochs: 10
+      }
     }
   },
   methods: {
