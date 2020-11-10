@@ -1,17 +1,20 @@
 <template>
   <div>
-    <button @click="show"></button>
-    <el-button :disabled="isTraining" :loading="isTraining" @click="run" style="width:130px">开始学习</el-button>
+    <p>当前训练数据总量 : {{ dataAmount }}</p>
+    <p>当前测试数据总量 : {{ testAmount }}</p>
+    <div class="panel">
+      <el-button :disabled="isTraining" :loading="isTraining" @click="startTrain" style="width:130px">开始学习</el-button>
+      <el-progress :percentage="processPercent" status="success" style="width:600px;margin-left: 50px"></el-progress>
+    </div>
     <div id="loss"></div>
   </div>
 </template>
 
 <script>
-import * as tf from '@tensorflow/tfjs'
 
 export default {
   name: 'DeepLearning',
-  props: ['Xtrain', 'Ytrain', ' epoch'],
+  props: ['Xtrain', 'Ytrain', 'Xtest', 'Ytest', 'layersNumber', 'neuronsNumber', 'epochs', 'batchSize'],
   data () {
     return {
       isTraining: false,
@@ -21,6 +24,12 @@ export default {
     }
   },
   computed: {
+    dataAmount: function () {
+      return this.Xtrain ? this.Xtrain.data.length : 0
+    },
+    testAmount: function () {
+      return this.Xtest ? this.Xtest.data.length : 0
+    },
     option: function () {
       return {
         xAxis: {
@@ -52,29 +61,25 @@ export default {
       this.currentEpoch = []
       this.currentLoss = []
     },
-    show () {
-      const inputs = tf.tensor(this.Xtrain.data)
-      const labels = tf.tensor(this.Ytrain.data)
-      console.log(labels.shape, inputs.shape)
-    },
-    async run () {
+    async startTrain () {
       this.reset()
-      const model = tf.sequential()
-      model.add(tf.layers.dense({
+      const model = this.$tf.sequential()
+      model.add(this.$tf.layers.dense({
         units: 12,
         inputShape: [this.Xtrain.data[0].length]
       }))
-      model.add(tf.layers.dense({ units: 1 }))
+      model.add(this.$tf.layers.dense({ units: 1 }))
       model.compile({
-        loss: tf.losses.meanSquaredError,
-        optimizer: tf.train.sgd(0.1)
+        loss: this.$tf.losses.meanSquaredError,
+        optimizer: this.$tf.train.sgd(0.1)
       })
-      const inputs = tf.tensor(this.Xtrain.data)
-      const labels = tf.tensor(this.Ytrain.data)
+      const inputs = this.$tf.tensor(this.Xtrain.data)
+      const labels = this.$tf.tensor(this.Ytrain.data)
       const callbacks = {
         onEpochEnd: (epoch, logs) => {
           this.currentEpoch.push(epoch)
           this.currentLoss.push(logs.loss)
+          this.processPercent = ((epoch + 1) / this.epochs) * 100
         },
         onTrainBegin: logs => {
           this.isTraining = !this.isTraining
@@ -84,8 +89,8 @@ export default {
         }
       }
       await model.fit(inputs, labels, {
-        batchSize: 200,
-        epochs: 20,
+        batchSize: this.batchSize,
+        epochs: this.epochs,
         callbacks: callbacks
       })
     }
@@ -98,8 +103,14 @@ export default {
 </script>
 
 <style scoped>
+.panel {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 #loss {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
 }
 </style>
