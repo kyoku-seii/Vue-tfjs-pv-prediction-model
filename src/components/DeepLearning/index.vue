@@ -5,7 +5,9 @@
     <p>当前测试数据总量 : {{ testAmount }}</p>
     <div class="panel">
       <el-button :disabled="isTraining" :loading="isTraining" @click="startTrain" style="width:130px">开始学习</el-button>
-      <el-progress :percentage="processPercent" status="success" style="width:600px;margin-left: 50px"></el-progress>
+      <el-progress :percentage="processPercent" status="success" style="width:500px;margin-left: 50px"></el-progress>
+      <div class="panelData" :class="{active:trainFinished,noActive: !trainFinished}"><p>
+        训练误差为:{{ trainMSE }} 验证误差为:{{ validMSE }}</p></div>
     </div>
     <div class="lossWrapper">
       <div id="loss"></div>
@@ -35,7 +37,10 @@ export default {
       currentLoss: [],
       validLoss: [],
       processPercent: 0,
-      result: []
+      result: [],
+      trainFinished: false,
+      trainMSE: 0,
+      validMSE: 0
     }
   },
   computed: {
@@ -48,9 +53,9 @@ export default {
     validAmount: function () {
       return this.Xvalid ? this.Xvalid.data.length : 0
     },
-    testData: function () {
+    valData: function () {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return this.Ytest ? this.Ytest.data.slice(0, 200) : []
+      return this.Yvalid ? this.Yvalid.data.slice(0, 200) : []
     },
     option: function () {
       return {
@@ -105,7 +110,7 @@ export default {
         series: [{
           type: 'line',
           showSymbol: false,
-          data: this.testData
+          data: this.valData
         }, {
           type: 'line',
           showSymbol: false,
@@ -134,6 +139,7 @@ export default {
       this.currentEpoch = []
       this.currentLoss = []
       this.validLoss = []
+      this.trainFinished = false
     },
     async startTrain () {
       this.reset()
@@ -162,13 +168,16 @@ export default {
           this.currentLoss.push(logs.loss)
           this.validLoss.push(logs.val_loss)
           this.processPercent = ((epoch + 1) / this.epochs) * 100
-          this.result = Array.from(model.predict(this.$tf.tensor(this.Xtest.data.slice(0, 200))).dataSync())
+          this.result = Array.from(model.predict(this.$tf.tensor(this.Xvalid.data.slice(0, 200))).dataSync())
         },
         onTrainBegin: logs => {
           this.isTraining = !this.isTraining
         },
         onTrainEnd: logs => {
           this.isTraining = !this.isTraining
+          this.trainFinished = true
+          this.trainMSE = this.currentLoss[this.epochs - 1].toFixed(2)
+          this.validMSE = this.validLoss[this.epochs - 1].toFixed(2)
         }
       }
       await model.fit(inputs, labels, {
@@ -203,16 +212,20 @@ export default {
 
 #loss {
   width: 500px;
-  height: 500px;
+  height: 400px;
 }
 
 #validLoss {
   width: 500px;
-  height: 500px;
+  height: 400px;
 }
 
 #output {
   width: 1000px;
-  height: 500px;
+  height: 400px;
+}
+
+.noActive {
+  visibility: hidden;
 }
 </style>

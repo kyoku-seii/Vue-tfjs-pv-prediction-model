@@ -28,6 +28,9 @@
                    :layersNumber='layersNumber' :neuronsNumber='neuronsNumber'
                    :epochs="hyperparameters.epochs" :batchSize="hyperparameters.batchSize">
     </deep-learning>
+    <p>左上角的图为AI在已知训练数据上的误差</p>
+    <p>右上的图为AI在验证集(一个已知但是并没有给AI看过的数据集)上的误差</p>
+    <p>下面一张图采取了200个点，已表现每回AI训练之后在验证集中的表现</p>
   </div>
 </template>
 

@@ -20,13 +20,13 @@ export default {
   },
   data () {
     return {
-      PVData: null,
-      X_train: null,
-      Y_train: null,
-      X_valid: null,
-      Y_valid: null,
-      X_test: null,
-      Y_test: null
+      PVData: undefined,
+      X_train: undefined,
+      Y_train: undefined,
+      X_valid: undefined,
+      Y_valid: undefined,
+      X_test: undefined,
+      Y_test: undefined
     }
   },
   provide () {

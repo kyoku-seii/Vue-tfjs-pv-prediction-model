@@ -4,9 +4,9 @@
       <canvas id="canvas"></canvas>
     </div>
     <div id="option">
-      <p>层数 : </p>
+      <p>层数 : {{ layers }}</p>
       <el-slider v-model="layers" :step="1" :min="3" :max="5" show-stops></el-slider>
-      <p>每层神经元个数 : </p>
+      <p>每层神经元个数 : {{ neurons }}</p>
       <el-slider v-model="neurons" :step="1" :min="1" :max="5" show-stops></el-slider>
     </div>
   </div>
@@ -102,8 +102,8 @@ export default {
 </script>
 
 <style scoped>
-.neuralWrapper{
-  width:500px;
+.neuralWrapper {
+  width: 500px;
   position: relative;
   left: 50%;
   transform: translateX(-200px);
