@@ -45,12 +45,12 @@ export default {
   methods: {
     downLoadAllData () {
       axios.all([
-        axios.get('/data/X_train.json'),
-        axios.get('/data/Y_train.json'),
-        axios.get('/data/X_valid.json'),
-        axios.get('/data/Y_valid.json'),
-        axios.get('/data/X_test.json'),
-        axios.get('/data/Y_test.json')
+        axios.get('./data/X_train.json'),
+        axios.get('./data/Y_train.json'),
+        axios.get('./data/X_valid.json'),
+        axios.get('./data/Y_valid.json'),
+        axios.get('./data/X_test.json'),
+        axios.get('./data/Y_test.json')
       ]).then(axios.spread((Xtrain, Ytrain, Xvalid, Yvalid, Xtest, Ytest) => {
         this.X_train = Xtrain.data
         this.Y_train = Ytrain.data

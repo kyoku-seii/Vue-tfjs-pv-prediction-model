@@ -68,7 +68,11 @@ export default {
           name: '误差',
           type: 'value'
         },
+        legend: {
+          data: ['测试集误差']
+        },
         series: [{
+          name: '测试集误差',
           type: 'line',
           data: this.currentLoss,
           showSymbol: false
@@ -86,7 +90,11 @@ export default {
           name: 'val_loss',
           type: 'value'
         },
+        legend: {
+          data: ['验证集误差']
+        },
         series: [{
+          name: '验证集误差',
           type: 'line',
           data: this.validLoss,
           showSymbol: false,
@@ -96,6 +104,9 @@ export default {
     },
     outputOption: function () {
       return {
+        legend: {
+          data: ['实际功率', '预测功率']
+        },
         xAxis: {
           name: '时间',
           boundaryGap: false,
@@ -108,10 +119,12 @@ export default {
           max: 4
         },
         series: [{
+          name: '实际功率',
           type: 'line',
           showSymbol: false,
           data: this.valData
         }, {
+          name: '预测功率',
           type: 'line',
           showSymbol: false,
           data: this.result
