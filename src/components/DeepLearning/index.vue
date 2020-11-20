@@ -16,6 +16,56 @@
     <div>
       <div id="output"></div>
     </div>
+    <el-collapse>
+      <el-collapse-item title="手动测试" name="1">
+        <div>
+          <el-form :inline="true" :model="featureData" label-position="left">
+            <el-form-item label="Day sin">
+              <el-input size="mini" v-model="featureData.daySin"></el-input>
+            </el-form-item>
+            <el-form-item label="Day cos">
+              <el-input size="mini" v-model="featureData.dayCos"></el-input>
+            </el-form-item>
+            <el-form-item label="Year sin">
+              <el-input size="mini" v-model="featureData.yearSin"></el-input>
+            </el-form-item>
+            <el-form-item label="Year cos">
+              <el-input size="mini" v-model="featureData.yearCos"></el-input>
+            </el-form-item>
+            <el-form-item label="Humidity">
+              <el-input size="mini" v-model="featureData.Humidity"></el-input>
+            </el-form-item>
+            <el-form-item label="WindSpeed">
+              <el-input size="mini" v-model="featureData.WindSpeed"></el-input>
+            </el-form-item>
+            <el-form-item label="Temp">
+              <el-input size="mini" v-model="featureData.Temp"></el-input>
+            </el-form-item>
+            <el-form-item label="CloudCover">
+              <el-input size="mini" v-model="featureData.CloudCover"></el-input>
+            </el-form-item>
+            <el-form-item label="Rain">
+              <el-input size="mini" v-model="featureData.Rain"></el-input>
+            </el-form-item>
+            <el-form-item label="SolarIrradiation">
+              <el-input size="mini" v-model="featureData.SolarIrradiation"></el-input>
+            </el-form-item>
+            <el-form-item label="generation">
+              <el-input size="mini" v-model="featureData.generation"></el-input>
+            </el-form-item>
+            <el-form-item label="before_30m">
+              <el-input size="mini" v-model="featureData.before_30m"></el-input>
+            </el-form-item>
+          </el-form>
+          <el-button type="primary" @click="handlePrediction" :disabled="!trainFinished">预测</el-button>
+          <div style="margin-top: 10px">下一个时刻的PV功率预测值为 : {{ this.prediction }}[kw]</div>
+        </div>
+      </el-collapse-item>
+      <el-collapse-item title="自动测试" name="2">
+        <div>456</div>
+      </el-collapse-item>
+    </el-collapse>
+
   </div>
 </template>
 
@@ -32,6 +82,7 @@ export default {
   props: ['Xtrain', 'Ytrain', 'Xtest', 'Ytest', 'Xvalid', 'Yvalid', 'layersNumber', 'neuronsNumber', 'epochs', 'batchSize'],
   data () {
     return {
+      model: null,
       isTraining: false,
       currentEpoch: [],
       currentLoss: [],
@@ -40,7 +91,22 @@ export default {
       result: [],
       trainFinished: false,
       trainMSE: 0,
-      validMSE: 0
+      validMSE: 0,
+      prediction: null,
+      featureData: {
+        daySin: 0.3689,
+        dayCos: 1.3650,
+        yearSin: 5.1876,
+        yearCos: -1.1441,
+        Humidity: -0.6822,
+        WindSpeed: -1.0382,
+        Temp: 0.1093,
+        CloudCover: -1.4491,
+        Rain: -0.1400,
+        SolarIrradiation: 2.9367,
+        generation: 3.0717,
+        before_30m: 2.8749
+      }
     }
   },
   computed: {
@@ -108,12 +174,12 @@ export default {
           data: ['实际功率', '预测功率']
         },
         xAxis: {
-          name: '时间',
+          name: '时间[t]',
           boundaryGap: false,
           data: array
         },
         yAxis: {
-          name: 'output',
+          name: '功率[KW]',
           type: 'value',
           min: 0,
           max: 4
@@ -153,21 +219,22 @@ export default {
       this.currentLoss = []
       this.validLoss = []
       this.trainFinished = false
+      this.model = null
     },
     async startTrain () {
       this.reset()
-      const model = this.$tf.sequential()
-      model.add(this.$tf.layers.dense({
+      this.model = this.$tf.sequential()
+      this.model.add(this.$tf.layers.dense({
         units: 12,
         inputShape: [this.Xtrain.data[0].length]
       }))
       for (let i = 1; i <= this.layersNumber; i++) {
-        model.add(this.$tf.layers.dense({
+        this.model.add(this.$tf.layers.dense({
           units: this.neuronsNumber
         }))
       }
-      model.add(this.$tf.layers.dense({ units: 1 }))
-      model.compile({
+      this.model.add(this.$tf.layers.dense({ units: 1 }))
+      this.model.compile({
         loss: this.$tf.losses.meanSquaredError,
         optimizer: this.$tf.train.sgd(0.1)
       })
@@ -181,7 +248,7 @@ export default {
           this.currentLoss.push(logs.loss)
           this.validLoss.push(logs.val_loss)
           this.processPercent = ((epoch + 1) / this.epochs) * 100
-          this.result = Array.from(model.predict(this.$tf.tensor(this.Xvalid.data.slice(0, 200))).dataSync())
+          this.result = Array.from(this.model.predict(this.$tf.tensor(this.Xvalid.data.slice(0, 200))).dataSync())
         },
         onTrainBegin: logs => {
           this.isTraining = !this.isTraining
@@ -193,12 +260,17 @@ export default {
           this.validMSE = this.validLoss[this.epochs - 1].toFixed(2)
         }
       }
-      await model.fit(inputs, labels, {
+      await this.model.fit(inputs, labels, {
         batchSize: this.batchSize,
         epochs: this.epochs,
         callbacks: callbacks,
         validationData: [inputsValid, labelsValid]
       })
+    },
+    handlePrediction () {
+      const tempArray = Object.values(this.featureData)
+      const tensor = this.$tf.tensor(tempArray).reshape([-1, tempArray.length])
+      this.prediction = this.model.predict(tensor).dataSync()
     }
   },
   mounted () {

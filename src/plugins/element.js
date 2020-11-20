@@ -5,6 +5,7 @@ import {
   Col,
   Form,
   FormItem,
+  Input,
   InputNumber,
   Menu,
   MenuItem,
@@ -12,9 +13,14 @@ import {
   Row,
   Slider,
   Submenu,
-  Switch
+  Switch,
+  Collapse,
+  CollapseItem
 } from 'element-ui'
 
+Vue.use(Input)
+Vue.use(CollapseItem)
+Vue.use(Collapse)
 Vue.use(Switch)
 Vue.use(Progress)
 Vue.use(Row)
