@@ -2,6 +2,7 @@
   <div class="home">
     <h1>前端机器学习</h1>
     <h2>光伏发电功率预测系统</h2>
+    <login-check></login-check>
     <div id="wrapper">
       <div class="leftPart">
         <router-link to="/SingleModel/Introduce">Single Model</router-link>
@@ -30,12 +31,14 @@
 <script>
 import LeftGraph from '../components/LeftGraph'
 import RightGraph from '../components/RightGraph'
+import LoginCheck from '../components/LoginCheck'
 
 export default {
   name: 'Home',
   components: {
     LeftGraph,
-    RightGraph
+    RightGraph,
+    LoginCheck
   }
 }
 </script>
