@@ -25,6 +25,7 @@
     <deep-learning :Xtrain="this.Xtrain" :Ytrain="this.Ytrain"
                    :Xvalid="this.Xvalid" :Yvalid="this.Yvalid"
                    :Xtest="this.Xtest" :Ytest="this.Ytest"
+                   :featureMax="this.featureMax" :featureMin="this.featureMin"
                    :layersNumber='layersNumber' :neuronsNumber='neuronsNumber'
                    :epochs="hyperparameters.epochs" :batchSize="hyperparameters.batchSize">
     </deep-learning>
@@ -97,6 +98,12 @@ export default {
     },
     Ytest () {
       return [1, 2, 3]
+    },
+    featureMax () {
+      return this.pvData ? this.pvData.max : []
+    },
+    featureMin () {
+      return this.pvData ? this.pvData.min : []
     }
   }
 }

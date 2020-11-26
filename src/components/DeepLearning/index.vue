@@ -20,41 +20,42 @@
       <el-collapse-item title="手动测试" name="1">
         <div>
           <el-form :inline="true" :model="featureData" label-position="left">
-            <el-form-item label="Day sin">
-              <el-input size="mini" v-model="featureData.daySin"></el-input>
+            <el-form-item label="month">
+              <el-input size="mini" type="number" v-model="featureData.month"
+                        oninput="if(value>12){value =12} if(value<=0){value=1}"></el-input>
             </el-form-item>
-            <el-form-item label="Day cos">
-              <el-input size="mini" v-model="featureData.dayCos"></el-input>
+            <el-form-item label="day">
+              <el-input size="mini" type="number" v-model.number="featureData.day" oninput="if(value>31){value=31}
+if(value<0) {value=1}"></el-input>
             </el-form-item>
-            <el-form-item label="Year sin">
-              <el-input size="mini" v-model="featureData.yearSin"></el-input>
+            <el-form-item label="hour">
+              <el-input size="mini" type="number" v-model.number="featureData.hour"
+                        oninput="if(value>=24){value=23} if(value<0){value=1}"></el-input>
             </el-form-item>
-            <el-form-item label="Year cos">
-              <el-input size="mini" v-model="featureData.yearCos"></el-input>
+            <el-form-item label="minutes">
+              <el-input-number size="small" type="number" v-model.number="featureData.minutes" :min="0" :max="30"
+                               controls-position="right" :step="30"></el-input-number>
             </el-form-item>
             <el-form-item label="Humidity">
-              <el-input size="mini" v-model="featureData.Humidity"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.Humidity"></el-input>
             </el-form-item>
             <el-form-item label="WindSpeed">
-              <el-input size="mini" v-model="featureData.WindSpeed"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.WindSpeed"></el-input>
             </el-form-item>
             <el-form-item label="Temp">
-              <el-input size="mini" v-model="featureData.Temp"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.Temp"></el-input>
             </el-form-item>
             <el-form-item label="CloudCover">
-              <el-input size="mini" v-model="featureData.CloudCover"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.CloudCover"></el-input>
             </el-form-item>
             <el-form-item label="Rain">
-              <el-input size="mini" v-model="featureData.Rain"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.Rain"></el-input>
             </el-form-item>
             <el-form-item label="SolarIrradiation">
-              <el-input size="mini" v-model="featureData.SolarIrradiation"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.SolarIrradiation"></el-input>
             </el-form-item>
             <el-form-item label="generation">
-              <el-input size="mini" v-model="featureData.generation"></el-input>
-            </el-form-item>
-            <el-form-item label="before_30m">
-              <el-input size="mini" v-model="featureData.before_30m"></el-input>
+              <el-input size="mini" type="number" v-model="featureData.generation"></el-input>
             </el-form-item>
           </el-form>
           <el-button type="primary" @click="handlePrediction" :disabled="!trainFinished">预测</el-button>
@@ -79,7 +80,8 @@ const array = (function () {
 })()
 export default {
   name: 'DeepLearning',
-  props: ['Xtrain', 'Ytrain', 'Xtest', 'Ytest', 'Xvalid', 'Yvalid', 'layersNumber', 'neuronsNumber', 'epochs', 'batchSize'],
+  props: ['Xtrain', 'Ytrain', 'Xtest', 'Ytest', 'Xvalid', 'Yvalid', 'layersNumber', 'neuronsNumber', 'epochs', 'batchSize',
+    'featureMax', 'featureMin'],
   data () {
     return {
       model: null,
@@ -94,18 +96,17 @@ export default {
       validMSE: 0,
       prediction: null,
       featureData: {
-        daySin: 0.3689,
-        dayCos: 1.3650,
-        yearSin: 5.1876,
-        yearCos: -1.1441,
-        Humidity: -0.6822,
-        WindSpeed: -1.0382,
-        Temp: 0.1093,
-        CloudCover: -1.4491,
-        Rain: -0.1400,
-        SolarIrradiation: 2.9367,
-        generation: 3.0717,
-        before_30m: 2.8749
+        month: 6,
+        day: 1,
+        hour: 16,
+        minutes: 0,
+        Humidity: 30,
+        WindSpeed: 3.3,
+        Temp: 31.4,
+        CloudCover: 0,
+        Rain: 0,
+        SolarIrradiation: 2.02,
+        generation: 1.0013646
       }
     }
   },
@@ -128,9 +129,6 @@ export default {
     valData () {
       return this.$tf.tensor(this.Xvalid.slice(0, 200))
     },
-    // valYData: function () {
-    //   return this.Yvalid.slice(0, 200)
-    // },
     option: function () {
       return {
         xAxis: {
@@ -273,8 +271,32 @@ export default {
     },
     handlePrediction () {
       const tempArray = Object.values(this.featureData)
-      const tensor = this.$tf.tensor(tempArray).reshape([-1, tempArray.length])
+      const dateArray = tempArray.splice(0, 4)
+      const dateString = `2014-${dateArray[0]}-${dateArray[1]} ${dateArray[2]}:${dateArray[3]}:00`
+      const { daySin, dayCos, yearSin, yearCos } = this.transformToDate(dateString)
+      const inputFeature = [daySin, dayCos, yearSin, yearCos].concat(tempArray)
+      const normalizedInput = inputFeature.map((item, index) => {
+        return (item - this.featureMin[index]) / (this.featureMax[index] - this.featureMin[index])
+      })
+      const tensor = this.$tf.tensor(normalizedInput).reshape([-1, normalizedInput.length])
       this.prediction = this.model.predict(tensor).dataSync()
+    },
+    transformToDate (date) {
+      const day = 24 * 60 * 60
+      const year = (365.2425) * day
+      const timestamp = Date.parse(date) / 1000
+
+      const daySin = Math.sin(timestamp * (2 * Math.PI / day))
+      const dayCos = Math.cos(timestamp * (2 * Math.PI / day))
+      const yearSin = Math.sin(timestamp * (2 * Math.PI / year))
+      const yearCos = Math.cos(timestamp * (2 * Math.PI / year))
+
+      return {
+        daySin,
+        dayCos,
+        yearSin,
+        yearCos
+      }
     }
   },
   mounted () {
