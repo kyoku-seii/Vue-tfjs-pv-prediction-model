@@ -9,6 +9,7 @@
           <span>前言</span>
         </template>
         <el-menu-item index="/SingleModel/Introduce">项目意义</el-menu-item>
+        <el-menu-item index="/SingleModel/Plan">项目进度</el-menu-item>
         <el-menu-item index="/SingleModel/Demo">机器学习开胃菜</el-menu-item>
       </el-submenu>
       <el-menu-item index="/SingleModel/DataIntroduce">

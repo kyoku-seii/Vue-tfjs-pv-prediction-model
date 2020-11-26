@@ -5,6 +5,7 @@ import AreaModel from '@/views/AreaModel'
 import SingleModel from '@/views/SingleModel'
 import Training from '@/views/Training'
 import Introduce from '@/views/Introduce'
+import Plan from '@/views/Plan'
 import Demo from '@/views/Demo'
 import DataIntroduce from '@/views/DataIntroduce'
 
@@ -31,6 +32,10 @@ const routes = [
       {
         path: 'Demo',
         component: Demo
+      },
+      {
+        path: 'Plan',
+        component: Plan
       },
       {
         path: 'training',

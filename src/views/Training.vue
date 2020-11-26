@@ -37,6 +37,7 @@
 <script>
 import DrawNeural from '../components/DrawNeural'
 import DeepLearning from '../components/DeepLearning'
+import axios from 'axios'
 
 export default {
   name: 'Training',
@@ -44,9 +45,9 @@ export default {
     DrawNeural,
     DeepLearning
   },
-  inject: ['getXtrainData', 'getYtrainData', 'getXvalidData', 'getYvalidData', 'getXtestData', 'getYtestData'],
   data () {
     return {
+      pvData: null,
       layersNumber: 3,
       neuronsNumber: 2,
       hyperparameters: {
@@ -54,6 +55,21 @@ export default {
         epochs: 10
       }
     }
+  },
+  mounted () {
+    axios.get('/api/pv/normalizedData', {
+      params: {
+        id: '1'
+      }
+    }).then((data) => {
+      if (data.data.errno !== 0) {
+        alert('数据传输过程遇到错误')
+      } else {
+        this.pvData = data.data.data
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
   },
   methods: {
     changeLayers: function (e) {
@@ -65,22 +81,22 @@ export default {
   },
   computed: {
     Xtrain: function () {
-      return this.getXtrainData()
+      return this.pvData ? this.pvData.normalizedData.slice(0, Math.floor(this.pvData.length * 0.8)) : []
     },
     Ytrain: function () {
-      return this.getYtrainData()
+      return this.pvData ? this.pvData.labels.slice(0, Math.floor(this.pvData.length * 0.8)) : []
     },
-    Xvalid: function () {
-      return this.getXvalidData()
+    Xvalid () {
+      return this.pvData ? this.pvData.normalizedData.slice(Math.floor(this.pvData.length * 0.8)) : []
     },
-    Yvalid: function () {
-      return this.getYvalidData()
+    Yvalid () {
+      return this.pvData ? this.pvData.labels.slice(Math.floor(this.pvData.length * 0.8)) : []
     },
-    Xtest: function () {
-      return this.getXtestData()
+    Xtest () {
+      return [1, 2, 3]
     },
-    Ytest: function () {
-      return this.getYtestData()
+    Ytest () {
+      return [1, 2, 3]
     }
   }
 }

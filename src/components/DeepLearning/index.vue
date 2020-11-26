@@ -1,8 +1,8 @@
 <template>
   <div>
-    <p>当前训练数据总量 : {{ dataAmount }}</p>
-    <p>当前验证数据总量 : {{ validAmount }}</p>
-    <p>当前测试数据总量 : {{ testAmount }}</p>
+    <p>当前训练数据总量 : {{ XtrainTensor.shape[0] }}</p>
+    <p>当前验证数据总量 : {{ XvalidTensor.shape[0] }}</p>
+    <p>当前测试数据总量 : {{ XtestTensor.shape[0] }}</p>
     <div class="panel">
       <el-button :disabled="isTraining" :loading="isTraining" @click="startTrain" style="width:130px">开始学习</el-button>
       <el-progress :percentage="processPercent" status="success" style="width:500px;margin-left: 50px"></el-progress>
@@ -110,19 +110,27 @@ export default {
     }
   },
   computed: {
-    dataAmount: function () {
-      return this.Xtrain ? this.Xtrain.data.length : 0
+    XtrainTensor () {
+      return this.$tf.tensor(this.Xtrain)
     },
-    testAmount: function () {
-      return this.Xtest ? this.Xtest.data.length : 0
+    YtrainTensor () {
+      return this.$tf.tensor(this.Ytrain)
     },
-    validAmount: function () {
-      return this.Xvalid ? this.Xvalid.data.length : 0
+    XvalidTensor () {
+      return this.$tf.tensor(this.Xvalid)
     },
-    valData: function () {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return this.Yvalid ? this.Yvalid.data.slice(0, 200) : []
+    YvalidTensor () {
+      return this.$tf.tensor(this.Yvalid)
     },
+    XtestTensor () {
+      return this.$tf.tensor(this.Xtest)
+    },
+    valData () {
+      return this.$tf.tensor(this.Xvalid.slice(0, 200))
+    },
+    // valYData: function () {
+    //   return this.Yvalid.slice(0, 200)
+    // },
     option: function () {
       return {
         xAxis: {
@@ -188,7 +196,7 @@ export default {
           name: '实际功率',
           type: 'line',
           showSymbol: false,
-          data: this.valData
+          data: this.Yvalid.slice(0, 200)
         }, {
           name: '预测功率',
           type: 'line',
@@ -225,10 +233,10 @@ export default {
       this.reset()
       this.model = this.$tf.sequential()
       this.model.add(this.$tf.layers.dense({
-        units: 12,
-        inputShape: [this.Xtrain.data[0].length]
+        units: this.neuronsNumber,
+        inputShape: [this.Xtrain[0].length]
       }))
-      for (let i = 1; i <= this.layersNumber; i++) {
+      for (let i = 1; i < this.layersNumber; i++) {
         this.model.add(this.$tf.layers.dense({
           units: this.neuronsNumber
         }))
@@ -238,17 +246,13 @@ export default {
         loss: this.$tf.losses.meanSquaredError,
         optimizer: this.$tf.train.sgd(0.1)
       })
-      const inputs = this.$tf.tensor(this.Xtrain.data)
-      const labels = this.$tf.tensor(this.Ytrain.data)
-      const inputsValid = this.$tf.tensor(this.Xvalid.data)
-      const labelsValid = this.$tf.tensor(this.Yvalid.data)
       const callbacks = {
         onEpochEnd: (epoch, logs) => {
           this.currentEpoch.push(epoch)
           this.currentLoss.push(logs.loss)
           this.validLoss.push(logs.val_loss)
           this.processPercent = ((epoch + 1) / this.epochs) * 100
-          this.result = Array.from(this.model.predict(this.$tf.tensor(this.Xvalid.data.slice(0, 200))).dataSync())
+          this.result = Array.from(this.model.predict(this.valData).dataSync())
         },
         onTrainBegin: logs => {
           this.isTraining = !this.isTraining
@@ -260,11 +264,11 @@ export default {
           this.validMSE = this.validLoss[this.epochs - 1].toFixed(2)
         }
       }
-      await this.model.fit(inputs, labels, {
+      await this.model.fit(this.XtrainTensor, this.YtrainTensor, {
         batchSize: this.batchSize,
         epochs: this.epochs,
         callbacks: callbacks,
-        validationData: [inputsValid, labelsValid]
+        validationData: [this.XvalidTensor, this.YvalidTensor]
       })
     },
     handlePrediction () {
