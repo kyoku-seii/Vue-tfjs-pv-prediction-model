@@ -15,7 +15,7 @@
       <el-menu-item index="/SingleModel/DataIntroduce">
         数据介绍
       </el-menu-item>
-      <el-menu-item index="/SingleModel/training">训练现场</el-menu-item>
+      <el-menu-item index="/SingleModel/training">30分钟后功率预测</el-menu-item>
     </el-menu>
   </div>
 </template>

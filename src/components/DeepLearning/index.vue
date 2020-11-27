@@ -4,7 +4,9 @@
     <p>当前验证数据总量 : {{ XvalidTensor.shape[0] }}</p>
     <p>当前测试数据总量 : {{ XtestTensor.shape[0] }}</p>
     <div class="panel">
-      <el-button :disabled="isTraining" :loading="isTraining" @click="startTrain" style="width:130px">开始学习</el-button>
+      <el-button :disabled="isTraining" type="primary" :loading="isTraining" @click="startTrain" style="width:130px">
+        开始学习
+      </el-button>
       <el-progress :percentage="processPercent" status="success" style="width:500px;margin-left: 50px"></el-progress>
       <div class="panelData" :class="{active:trainFinished,noActive: !trainFinished}"><p>
         训练误差为:{{ trainMSE }} 验证误差为:{{ validMSE }}</p></div>
@@ -15,6 +17,13 @@
     </div>
     <div>
       <div id="output"></div>
+    </div>
+    <div v-show="this.Xtest && this.Xtest.length>=1" class="testWindow">
+      <div class="testPanel">
+        <el-button type="primary" @click="forecast" :disabled="!trainFinished || isTraining">预测</el-button>
+        <div style="margin-left: 30px"><p>MSE误差 : {{ testMSE }}   MAE误差 : {{ testMAE }}</p></div>
+      </div>
+      <div id="testGraph"></div>
     </div>
     <el-collapse>
       <el-collapse-item title="手动测试" name="1">
@@ -71,6 +80,7 @@ if(value<0) {value=1}"></el-input>
 </template>
 
 <script>
+
 const array = (function () {
   const array = []
   for (let i = 0; i < 200; i++) {
@@ -84,17 +94,20 @@ export default {
     'featureMax', 'featureMin'],
   data () {
     return {
-      model: null,
-      isTraining: false,
-      currentEpoch: [],
-      currentLoss: [],
-      validLoss: [],
-      processPercent: 0,
-      result: [],
-      trainFinished: false,
-      trainMSE: 0,
-      validMSE: 0,
-      prediction: null,
+      model: null, // 预测模型的本地
+      isTraining: false, // 模型是否在训练
+      currentEpoch: [], // 当前的epoch次数
+      currentLoss: [], // 当前的学习集中的损失值
+      validLoss: [], // 当前的学习集中的损失值
+      processPercent: 0, // 学习完成百分比
+      result: [], // 每次学习结束之后验证集中的预测结果
+      trainFinished: false, // 判断学习是否结束
+      trainMSE: 0, // 学习集中的MSE误差
+      validMSE: 0, // 验证集中的MSE误差
+      prediction: null, // 验证数据上的预测值
+      forecastResult: [], // 测试数据的预测值
+      testMSE: null,
+      testMAE: null,
       featureData: {
         month: 6,
         day: 1,
@@ -128,6 +141,19 @@ export default {
     },
     valData () {
       return this.$tf.tensor(this.Xvalid.slice(0, 200))
+    },
+    forecastData () {
+      if (!this.Xtest || !this.Xtest.length) {
+        return null
+      }
+      const normalizedXtest = []
+      this.Xtest.forEach((array) => {
+        const tempRow = array.map((item, index) => {
+          return (item - this.featureMin[index]) / (this.featureMax[index] - this.featureMin[index])
+        })
+        normalizedXtest.push(tempRow)
+      })
+      return this.$tf.tensor(normalizedXtest)
     },
     option: function () {
       return {
@@ -202,6 +228,35 @@ export default {
           data: this.result
         }]
       }
+    },
+    testGraphOption: function () {
+      return {
+        legend: {
+          data: ['实际功率', '预测功率']
+        },
+        xAxis: {
+          name: '时间[t]',
+          boundaryGap: false,
+          data: array
+        },
+        yAxis: {
+          name: '功率[KW]',
+          type: 'value',
+          min: 0,
+          max: 4
+        },
+        series: [{
+          name: '实际功率',
+          type: 'line',
+          showSymbol: false,
+          data: this.Ytest.slice(0, 200)
+        }, {
+          name: '预测功率',
+          type: 'line',
+          showSymbol: false,
+          data: this.forecastResult.slice(0, 200)
+        }]
+      }
     }
   },
   watch: {
@@ -216,6 +271,10 @@ export default {
     outputOption: function () {
       const output = this.$echarts.init(document.getElementById('output'))
       output.setOption(this.outputOption)
+    },
+    testGraphOption: function () {
+      const testGraph = this.$echarts.init(document.getElementById('testGraph'))
+      testGraph.setOption(this.testGraphOption)
     }
   },
   methods: {
@@ -297,6 +356,28 @@ export default {
         yearSin,
         yearCos
       }
+    },
+    forecast () {
+      this.forecastResult.splice(0, this.forecastResult.length)
+      const forecastData = this.model.predict(this.forecastData).dataSync()
+      this.forecastResult.push(...forecastData)
+      const loss = this.calcuLoss(forecastData, this.Ytest)
+      this.testMSE = loss.mse.toFixed(4)
+      this.testMAE = loss.mae.toFixed(4)
+    },
+    calcuLoss (x1, x2) {
+      let mseSum = 0
+      let maeSum = 0
+      const length = x1.length
+      x1.forEach((item, index) => {
+        const loss = Math.abs(item - x2[index])
+        maeSum += loss
+        mseSum += loss * loss
+      })
+      return {
+        mse: mseSum / length,
+        mae: maeSum / length
+      }
     }
   },
   mounted () {
@@ -306,11 +387,13 @@ export default {
     validGraph.setOption(this.validOption)
     const outputGraph = this.$echarts.init(document.getElementById('output'))
     outputGraph.setOption(this.outputOption)
+    const testGraph = this.$echarts.init(document.getElementById('testGraph'))
+    testGraph.setOption(this.testGraphOption)
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .panel {
   display: flex;
   justify-content: flex-start;
@@ -334,6 +417,21 @@ export default {
 #output {
   width: 1000px;
   height: 400px;
+}
+
+#testGraph {
+  width: 1000px;
+  height: 400px;
+}
+
+.testWindow {
+  margin-top: 50px;
+
+  .testPanel {
+    display: flex;
+    align-items: flex-start;
+  }
+
 }
 
 .noActive {

@@ -49,6 +49,7 @@ export default {
   data () {
     return {
       pvData: null,
+      testDate: null,
       layersNumber: 3,
       neuronsNumber: 2,
       hyperparameters: {
@@ -67,6 +68,19 @@ export default {
         alert('数据传输过程遇到错误')
       } else {
         this.pvData = data.data.data
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+    axios.get('/api/pv/test', {
+      params: {
+        id: '1'
+      }
+    }).then((data) => {
+      if (data.data.errno !== 0) {
+        alert('数据传输过程错误')
+      } else {
+        this.testDate = data.data.data
       }
     }).catch((error) => {
       console.log(error)
@@ -94,10 +108,10 @@ export default {
       return this.pvData ? this.pvData.labels.slice(Math.floor(this.pvData.length * 0.8)) : []
     },
     Xtest () {
-      return [1, 2, 3]
+      return this.testDate ? this.testDate.data : []
     },
     Ytest () {
-      return [1, 2, 3]
+      return this.testDate ? this.testDate.labels : []
     },
     featureMax () {
       return this.pvData ? this.pvData.max : []
