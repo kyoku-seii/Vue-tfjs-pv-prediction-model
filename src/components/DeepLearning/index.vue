@@ -21,7 +21,7 @@
     <div v-show="this.Xtest && this.Xtest.length>=1" class="testWindow">
       <div class="testPanel">
         <el-button type="primary" @click="forecast" :disabled="!trainFinished || isTraining">预测</el-button>
-        <div style="margin-left: 30px"><p>MSE误差 : {{ testMSE }}   MAE误差 : {{ testMAE }}</p></div>
+        <div style="margin-left: 30px"><p>MSE误差 : {{ testMSE }} MAE误差 : {{ testMAE }}</p></div>
       </div>
       <div id="testGraph"></div>
     </div>
@@ -72,7 +72,10 @@ if(value<0) {value=1}"></el-input>
         </div>
       </el-collapse-item>
       <el-collapse-item title="自动测试" name="2">
-        <div>456</div>
+        <el-button type="primary" @click="showAuto" :disabled="!forecastResult.length>0">自动预测</el-button>
+        <div v-if="show">
+          <dynamic-graph :forecastResult="forecastResult" :Ytest="Ytest"></dynamic-graph>
+        </div>
       </el-collapse-item>
     </el-collapse>
 
@@ -81,6 +84,8 @@ if(value<0) {value=1}"></el-input>
 
 <script>
 
+import DynamicGraph from '../DynamicGraph'
+
 const array = (function () {
   const array = []
   for (let i = 0; i < 200; i++) {
@@ -88,12 +93,15 @@ const array = (function () {
   }
   return array
 })()
+
 export default {
   name: 'DeepLearning',
+  components: { DynamicGraph },
   props: ['Xtrain', 'Ytrain', 'Xtest', 'Ytest', 'Xvalid', 'Yvalid', 'layersNumber', 'neuronsNumber', 'epochs', 'batchSize',
     'featureMax', 'featureMin'],
   data () {
     return {
+      show: false,
       model: null, // 预测模型的本地
       isTraining: false, // 模型是否在训练
       currentEpoch: [], // 当前的epoch次数
@@ -378,6 +386,9 @@ export default {
         mse: mseSum / length,
         mae: maeSum / length
       }
+    },
+    showAuto () {
+      this.show = true
     }
   },
   mounted () {
