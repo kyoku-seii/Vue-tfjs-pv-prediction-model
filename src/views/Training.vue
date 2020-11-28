@@ -58,7 +58,7 @@ export default {
       }
     }
   },
-  mounted () {
+  beforeCreate () {
     axios.get('/api/pv/normalizedData', {
       params: {
         id: '1'

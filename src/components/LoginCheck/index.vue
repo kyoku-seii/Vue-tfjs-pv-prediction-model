@@ -43,7 +43,6 @@ export default {
       }).then(res => {
         if (res.data.errno === 0) {
           // 登录成功
-          console.log(res)
           self.userToken = 'flag'
           localStorage.setItem('Token', self.userToken)
           this.$router.push('/SingleModel/Introduce')

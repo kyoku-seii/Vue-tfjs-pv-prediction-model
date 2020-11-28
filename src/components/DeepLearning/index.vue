@@ -3,8 +3,10 @@
     <p>当前训练数据总量 : {{ XtrainTensor.shape[0] }}</p>
     <p>当前验证数据总量 : {{ XvalidTensor.shape[0] }}</p>
     <p>当前测试数据总量 : {{ XtestTensor.shape[0] }}</p>
+    <div v-if="!downLoad"><p>(大数据文件还在下载中...目前无法进行机器学习，请再耐心等一下下就好了)</p></div>
     <div class="panel">
-      <el-button :disabled="isTraining" type="primary" :loading="isTraining" @click="startTrain" style="width:130px">
+      <el-button :disabled="!downLoad || isTraining" type="primary" :loading="isTraining" @click="startTrain"
+                 style="width:130px">
         开始学习
       </el-button>
       <el-progress :percentage="processPercent" status="success" style="width:500px;margin-left: 50px"></el-progress>
@@ -101,6 +103,7 @@ export default {
     'featureMax', 'featureMin'],
   data () {
     return {
+      downLoad: false,
       show: false,
       model: null, // 预测模型的本地
       isTraining: false, // 模型是否在训练
@@ -268,6 +271,11 @@ export default {
     }
   },
   watch: {
+    Xtrain: function () {
+      if (this.Xtrain.length > 0) {
+        this.downLoad = true
+      }
+    },
     option: function () {
       const lossGraph = this.$echarts.init(document.getElementById('loss'))
       lossGraph.setOption(this.option)
