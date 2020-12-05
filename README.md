@@ -1,24 +1,54 @@
-# front-end-machine-learning
+# 前端机器学习———光伏功率预测系统
 
-## Project setup
-```
-yarn install
-```
+## 基本介绍
+基于浏览器制作一个简单的AI,用户只需通过简单的鼠标点击来预测一段时间后的光伏发电功率，从而为电网负载均衡提供帮助。
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## 在线浏览地址
+http://47.254.216.86:8080/#/
 
-### Compiles and minifies for production
-```
-yarn build
-```
+## 技术栈
+* 机器学习库 : TensorflowJS
+* 框架: vue
+* 图表: echart
+* 界面: elementUI
 
-### Lints and fixes files
-```
-yarn lint
-```
+## 演示
+---
+通过滑块定制自己神经网络结构
+(可以估计简化模型或者加深模型复杂度，来观察过拟合与欠拟合现象)
+![](./image/1.png)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+超参量选择
+![](./image/2.png)
+
+
+模型学习过程中，MSE误差下降曲线
+![](./image/3.png)
+
+实时显示模型在验证数据前200个点的表现
+![](./image/4.png)
+
+
+在测试数据中的表现(未来数据)
+![](./image/5.png)
+
+
+用户输入预测日的具体信息，比如天气数据与时间数据。后台完成数据归一化操作，并进行预测返回信息。
+![](./image/6.png)
+
+每隔一段时间更新实际数据与预测数据
+![](./image/7.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
